@@ -6,10 +6,8 @@ import SectionContainer from './SectionContainer'
 import Footer from './Footer'
 import MobileNav from './MobileNav'
 import ThemeSwitch from './ThemeSwitch'
-import { useTheme } from 'next-themes'
 
 const LayoutWrapper = ({ children }) => {
-  const { theme, resolvedTheme } = useTheme()
   return (
     <SectionContainer>
       <div className="flex h-screen flex-col justify-between">
@@ -17,7 +15,7 @@ const LayoutWrapper = ({ children }) => {
           <div>
             <Link href="/" aria-label={siteMetadata.headerTitle}>
               <div className="flex items-center justify-between">
-                <div className="mr-3">
+                <div className="mr-4">
                   <Logo fill="currentColor" className="text-gray-900 dark:text-gray-100" />
                 </div>
                 {typeof siteMetadata.headerTitle === 'string' ? (
