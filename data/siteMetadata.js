@@ -16,6 +16,7 @@ const siteMetadata = {
   //facebook: 'https://facebook.com',
   //youtube: 'https://youtube.com',
   linkedin: 'https://www.linkedin.com/in/1875',
+  cv: 'https://simulacre7.github.io/resume',
   locale: 'en-US',
   analytics: {
     // If you want to use an analytics provider you have to add it to the
