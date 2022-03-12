@@ -5,11 +5,11 @@ const siteMetadata = {
   description: '개발자 김기환이 배운 것을 기록하는 공간',
   language: 'ko-kr',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
-  siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
+  siteUrl: 'https://kihwan.vercel.app',
+  siteRepo: 'https://github.com/simulacre7/MyBlog',
   siteLogo: '/static/images/logo.png',
   image: '/static/images/avatar.png',
-  socialBanner: '/static/images/twitter-card.png',
+  socialBanner: '/static/images/banner.png',
   email: 'juljin1875@gmail.com',
   github: 'https://github.com/simulacre7',
   //twitter: 'https://twitter.com/Twitter',
@@ -55,7 +55,7 @@ const siteMetadata = {
       // Place the comment box above the comments. options: bottom, top
       inputPosition: 'bottom',
       // Choose the language giscus will be displayed in. options: en, es, zh-CN, zh-TW, ko, ja etc
-      lang: 'en',
+      lang: 'ko',
       // theme when dark mode
       darkTheme: 'transparent_dark',
       // If the theme option above is set to 'custom`
