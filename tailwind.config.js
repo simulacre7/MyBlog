@@ -159,6 +159,9 @@ module.exports = {
               color: theme('colors.gray.100'),
               borderLeftColor: theme('colors.gray.700'),
             },
+            p: {
+              fontSize: '1.1rem',
+            },
           },
         },
       }),
