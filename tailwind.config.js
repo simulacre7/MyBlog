@@ -28,13 +28,17 @@ module.exports = {
         sans: ['RIDIBatang', ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        primary: colors.teal,
-        gray: colors.neutral,
+        primary: colors.rose,
+        gray: colors.zinc,
       },
+
       typography: (theme) => ({
         DEFAULT: {
           css: {
             color: theme('colors.gray.700'),
+            p: {
+              fontSize: '1.1rem',
+            },
             a: {
               color: theme('colors.primary.500'),
               '&:hover': {
@@ -158,9 +162,6 @@ module.exports = {
             blockquote: {
               color: theme('colors.gray.100'),
               borderLeftColor: theme('colors.gray.700'),
-            },
-            p: {
-              fontSize: '1.1rem',
             },
           },
         },

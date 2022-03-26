@@ -1,0 +1,15 @@
+---
+title: '[밑바닥부터 만드는 브라우저] 1장 DOM'
+date: '2022-03-26'
+tags: ['rust', 'browser', 'low-level', 'DOM']
+draft: false
+summary: '브라우저의 핵심 기능은 HTML 렌더링이다.
+브라우저에서 JavaScript로 HTML 문서를 제어하는 API를 DOM이라고 한다.
+즉, HTML 렌더링 구현하려면 DOM을 구현해야만 한다.'
+layout: PostSimple
+bibliography: /browser/1-DOM-API.bib
+canonicalUrl: https://tailwind-nextjs-starter-blog.vercel.app/blog/browser-rust-1/
+---
+
+DOM은 모든 HTML 태그를 객체로 다루고, 객체들의 관계를 트리 구조로 표현한다.
+이러한 객체를 JavaScript로 접근할 수 있고, 페이지를
