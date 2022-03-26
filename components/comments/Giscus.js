@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useTheme } from 'next-themes'
-
+import { useInView } from 'react-intersection-observer'
 import siteMetadata from '@/data/siteMetadata'
 
 const Giscus = ({ mapping }) => {
+  const [ref, inView] = useInView()
   const [enableLoadComments, setEnabledLoadComments] = useState(true)
   const { theme, resolvedTheme } = useTheme()
   const commentsTheme =
@@ -52,8 +53,13 @@ const Giscus = ({ mapping }) => {
     LoadComments()
   }, [LoadComments])
 
+  // 이 컴포넌트가 화면에 보이면 comments를 불러옴
+  useEffect(() => {
+    LoadComments()
+  }, [inView])
+
   return (
-    <div className="pt-6 pb-6 text-center text-gray-700 dark:text-gray-300">
+    <div ref={ref} className="pt-6 pb-6 text-center text-gray-700 dark:text-gray-300">
       {enableLoadComments && <button onClick={LoadComments}>Load Comments</button>}
       <div className="giscus" id={COMMENTS_ID} />
     </div>
