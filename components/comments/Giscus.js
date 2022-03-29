@@ -8,23 +8,39 @@ const GiscusContainer = ({ mapping }) => {
   const { repo, repositoryId, category, categoryId, reactions, metadata, inputPosition, lang } =
     siteMetadata?.comment?.giscusConfig
 
+  const isDark = theme === 'dark' || resolvedTheme === 'dark'
+
   return (
-    <Giscus
-      repo={repo}
-      repoId={repositoryId}
-      category={category}
-      categoryId={categoryId}
-      mapping={mapping}
-      reactionsEnabled={reactions}
-      emitMetadata={metadata}
-      theme={
-        theme === 'dark' || resolvedTheme === 'dark'
-          ? siteMetadata.comment.giscusConfig.darkTheme
-          : siteMetadata.comment.giscusConfig.theme
-      }
-      inputPosition={inputPosition}
-      lang={lang}
-    />
+    <>
+      <div style={{ display: isDark ? 'block' : 'none' }}>
+        <Giscus
+          repo={repo}
+          repoId={repositoryId}
+          category={category}
+          categoryId={categoryId}
+          mapping={mapping}
+          reactionsEnabled={reactions}
+          emitMetadata={metadata}
+          theme={siteMetadata.comment.giscusConfig.darkTheme}
+          inputPosition={inputPosition}
+          lang={lang}
+        />
+      </div>
+      <div style={{ display: isDark ? 'none' : 'block' }}>
+        <Giscus
+          repo={repo}
+          repoId={repositoryId}
+          category={category}
+          categoryId={categoryId}
+          mapping={mapping}
+          reactionsEnabled={reactions}
+          emitMetadata={metadata}
+          theme={siteMetadata.comment.giscusConfig.theme}
+          inputPosition={inputPosition}
+          lang={lang}
+        />
+      </div>
+    </>
   )
 }
 
