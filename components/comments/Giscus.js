@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Giscus } from '@giscus/react'
 import { useTheme } from 'next-themes'
 import siteMetadata from '@/data/siteMetadata'
@@ -8,7 +8,8 @@ const GiscusContainer = ({ mapping }) => {
   const { repo, repositoryId, category, categoryId, reactions, metadata, inputPosition, lang } =
     siteMetadata?.comment?.giscusConfig
 
-  return (
+  const isDark = theme === 'dark' || resolvedTheme === 'dark'
+  const coloredGiscus = (giscusTheme) => (
     <Giscus
       repo={repo}
       repoId={repositoryId}
@@ -17,14 +18,21 @@ const GiscusContainer = ({ mapping }) => {
       mapping={mapping}
       reactionsEnabled={reactions}
       emitMetadata={metadata}
-      theme={
-        theme === 'dark' || resolvedTheme === 'dark'
-          ? siteMetadata.comment.giscusConfig.darkTheme
-          : siteMetadata.comment.giscusConfig.theme
-      }
+      theme={giscusTheme}
       inputPosition={inputPosition}
       lang={lang}
     />
+  )
+
+  return (
+    <>
+      <div style={{ display: isDark ? 'block' : 'none' }}>
+        {coloredGiscus(siteMetadata.comment.giscusConfig.darkTheme)}
+      </div>
+      <div style={{ display: isDark ? 'none' : 'block' }}>
+        {coloredGiscus(siteMetadata.comment.giscusConfig.theme)}
+      </div>
+    </>
   )
 }
 
