@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Giscus } from '@giscus/react'
 import { useTheme } from 'next-themes'
 import siteMetadata from '@/data/siteMetadata'
