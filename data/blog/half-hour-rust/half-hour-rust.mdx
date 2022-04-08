@@ -13,7 +13,6 @@ canonicalUrl: https://tailwind-nextjs-starter-blog.vercel.app/blog/half-hour-rus
 > 물론 저자에게 허락을 받았습니다.
 > 번역문 뒤의 참고문헌은 제가 작성했습니다.
 
-프로그래밍 언어에 익숙해지기 위해서는 그 언어로 작성된 코드를 많이 읽어야만 합니다.
 이 글에서 최대한 많은 Rust 코드 조각들을 다루고자 합니다.
 독자들은 Rust의 수 많은 키워드와 기호가 각각 어떤 의미를 갖는지 알게 될 것이고,
 온라인에서 마주치는 대부분의 Rust 코드를 이해할 수 있게 될 것입니다.
@@ -41,10 +40,253 @@ x = 42;
 //    also u8, u16, u32, u64, u128 for unsigned
 ```
 
-이것 또한 한 줄로 쓸 수 있습니다.
+이것 또한 한 줄로 줄여쓸 수 있습니다.
 
 ```rust
 let x: i32 = 42;
+```
+
+변수의 값을 초기화하기도 전에 그 변수를 호출한다면 컴파일러가 에러를 일으킵니다.
+
+```rust
+let x;
+foobar(x); // error: borrow of possibly-uninitialized variable: `x`
+x = 42;
+```
+
+아래와 같이 초기화를 먼저해야 합니다.
+
+```rust
+let x;
+x = 42;
+foobar(x); // the type of `x` will be inferred from here
+```
+
+밑줄 기호(undersocre) `_`로 변수 이름을 지으면 값을 무시합니다.
+
+```rust
+// this does *nothing* because 42 is a constant
+let _ = 42;
+
+// this calls `get_thing` but throws away its result
+let _ = get_thing();
+```
+
+이름이 `_`로 <i>시작</i>하는 경우, 위와는 다르게 동작합니다.
+이 용법은 컴파일러가 이 변수가 사용되지 않더라도 경고하지 않게끔 합니다.
+
+```rust
+// we may use `_x` eventually, but our code is a work-in-progress
+// and we just wanted to get rid of a compiler warning for now.
+let _x = 42;
+```
+
+아래와 같은 경우를 <i>shadow</i>라고 합니다.
+
+```rust
+let x = 13;
+let x = x + 3;
+// using `x` after that line only refers to the second `x`,
+// the first `x` no longer exists.
+```
+
+Rust에는 튜플(tuples) 자료구조가 있습니다. 튜플은 "길이가 고정된, 여러 타입들의 값들의 집합"입니다.
+
+```rust
+let pair = ('a', 17);
+pair.0; // this is 'a'
+pair.1; // this is 17
+```
+
+`pair`의 타입을 명시하고 싶다면, 아래와 같이 쓰면 됩니다.
+
+```rust
+let pair: (char, i32) = ('a', 17);
+```
+
+튜플은 구조 분해 할당(destructuring assignment)가 가능합니다.
+
+```rust
+let (some_char, some_int) = ('a', 17);
+// now, `some_char` is 'a', and `some_int` is 17
+```
+
+구조 분해 할당은 어떤 함수가 튜플을 리턴할 때 유용합니다.
+
+```rust
+let (left, right) = slice.split_at(middle);
+```
+
+구조 분해 할당을 할 때, `_`을 사용해서 튜플의 일부를 무시할 수 있습니다.
+
+```rust
+let (_, right) = slice.split_at(middle);
+```
+
+세미 콜론은 `;` 문장(statement)의 끝을 의미합니다.
+
+```rust
+let x = 3;
+let y = 5;
+let z = y + x;
+```
+
+이 말인즉슨 한 문장은 여러 줄을 가질 수 있습니다.
+아래 코드가 실제로 어떤 의미를 갖는지는 조금 있다가 다루겠습니다.
+
+```rust
+let x = vec![1, 2, 3, 4, 5, 6, 7, 8]
+    .iter()
+    .map(|x| x + 3)
+    .fold(0, |x, y| x + y);
+```
+
+`fn`은 함수를 선언합니다.
+
+```rust
+fn greet() {
+    println!("Hi there!");
+}
+```
+
+화살표 `->` 기호를 통해 return 타입을 명시할 수 있습니다.
+
+```rust
+fn fair_dice_roll() -> i32 {
+    4
+}
+```
+
+한 쌍의 중괄호로 block을 선언합니다. block은 고유의 scope를 가집니다.
+
+```rust
+// This prints "in", then "out"
+fn main() {
+    let x = "out";
+    {
+        // this is a different `x`
+        let x = "in";
+        println!("{}", x);
+    }
+    println!("{}", x);
+}
+```
+
+Block은 표현식이기도 합니다. 이 말인즉슨 block은 결과값을 반환합니다.
+
+```rust
+// this:
+let x = 42;
+
+// is equivalent to this:
+let x = { 42 };
+```
+
+한 block 안에서 여러 개의 문장이 있을 수 있습니다.
+
+```rust
+let x = {
+    let y = 1; // first statement
+    let z = 2; // second statement
+    y + z // this is the *tail* - what the whole block will evaluate to
+};
+```
+
+함수의 마지막 부분에서 세미콜론을 생략하는 것은 return을 의미합니다.
+따라서 아래의 두 함수는 똑같이 동작합니다.
+
+```rust
+fn fair_dice_roll() -> i32 {
+    return 4;
+}
+
+fn fair_dice_roll() -> i32 {
+    4
+}
+```
+
+`if` 조건문 또한 표현식(expression)입니다.
+
+```rust
+fn fair_dice_roll() -> i32 {
+    if feeling_lucky {
+        6
+    } else {
+        4
+    }
+}
+```
+
+`match` 또한 표현식입니다.
+
+```rust
+fn fair_dice_roll() -> i32 {
+    match feeling_lucky {
+        true => 6,
+        false => 4,
+    }
+}
+```
+
+점(`.`)은 field의 값을 접근하기 위해 사용됩니다.
+
+```rust
+let a = (10, 20);
+a.0; // this is 10
+
+let amos = get_some_struct();
+amos.nickname; // this is "fasterthanlime"
+```
+
+또는 메소드를 부르기 위해 사용됩니다.
+
+```rust
+let nick = "fasterthanlime";
+nick.len(); // this is 14
+```
+
+Double-colon `::`은 점과 비슷하지만 네임스페이스로 동작합니다.
+
+아래 예시에서, `std`는 <i>crate</i>(라이브러리와 유사한 개념)이고, `cmp`는 <i>module</i>이고 `min`은 함수이다.
+
+```rust
+let least = std::cmp::min(3, 8); // this is 3
+```
+
+`use`를 통해, 이름을 간결하게 가져올 수 있습니다.
+
+```rust
+use std::cmp::min;
+
+let least = min(7, 1); // this is 1
+```
+
+`use`를 쓸 때, 중괄호는 또 다른 의미를 가집니다.
+
+```rust
+// this works:
+use std::cmp::min;
+use std::cmp::max;
+
+// this also works:
+use std::cmp::{min, max};
+
+// this also works!
+use std::{cmp::min, cmp::max};
+```
+
+와일드카드(`*`)를 통해, 네임스페이스의 모든 요소를 가져올 수 있습니다.
+
+```rust
+// this brings `min` and `max` in scope, and many other things
+use std::cmp::*;
+```
+
+타입 또한 네임스페이스입니다. 따라서 타입의 메소드는 일반적인 함수처럼 호출될 수 있습니다.
+
+```rust
+let x = "amos".len(); // this is 4
+let x = str::len("amos"); // this is also 4
 ```
 
 ### 참고문헌
