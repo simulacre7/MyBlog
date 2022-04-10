@@ -289,6 +289,79 @@ let x = "amos".len(); // this is 4
 let x = str::len("amos"); // this is also 4
 ```
 
+`str`은 원시 타입이지만, 원시 타입이 아닌 타입들도 다음과 같이 활용이 가능합니다.
+
+```rust
+// `Vec` is a regular struct, not a primitive type
+let v = Vec::new();
+
+// this is exactly the same code, but with the *full* path to `Vec`
+let v = std::vec::Vec::new();
+```
+
+위와 같은 일이 가능한 이유는 Rust는 각 모듈에 다음과 같은 코드를 삽입하기 때문입니다.
+
+```rust
+use std::prelude::v1::*;
+```
+
+(Which in turns re-exports a lot of symbols, like Vec, String, Option and Result).
+
+구조체는 `struct` 키워드로 선언됩니다.
+
+```rust
+struct Vec2 {
+    x: f64, // 64-bit floating point, aka "double precision"
+    y: f64,
+}
+```
+
+구조체는 구조체 리터럴(strucut literals)을 통해, 값을 초기화할 수 있습니다.
+
+```rust
+let v1 = Vec2 { x: 1.0, y: 3.0 };
+let v2 = Vec2 { y: 2.0, x: 4.0 };
+// the order does not matter, only the names do
+```
+
+다른 구조체에서 나머지 필드를 초기화하는 편리한 방법이 있습니다.
+
+```rust
+let v3 = Vec2 {
+    x: 14.0,
+    ..v2
+};
+```
+
+이것을 "struct update syntax"이라고 부릅니다. 맨 마지막 부분에만 활용이 가능하며, 뒤에 `,`가 붙을 수 없습니다.
+
+나머지 필드는 모든 필드를 의미할 수 있습니다.
+
+```rust
+let v4 = Vec2 { ..v3 };
+```
+
+구조체도 튜플과 마찬가지로 분해가 가능합니다.
+
+```rust
+let (left, right) = slice.split_at(middle);
+```
+
+아래처럼 분해 할당을 활용할 수 있습니다.
+
+```rust
+let v = Vec2 { x: 3.0, y: 6.0 };
+let Vec2 { x, y } = v;
+// `x` is now 3.0, `y` is now `6.0`
+```
+
+구조 분해 할당과 struct update syntax을 같이 쓸 수 있습니다.
+
+```rust
+let Vec2 { x, .. } = v;
+// this throws away `v.y`
+```
+
 ### 참고문헌
 
 - Amos Wenger, <i>A half-hour to learn Rust.</i> https://fasterthanli.me/articles/a-half-hour-to-learn-rust
