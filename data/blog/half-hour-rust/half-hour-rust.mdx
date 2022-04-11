@@ -362,6 +362,347 @@ let Vec2 { x, .. } = v;
 // this throws away `v.y`
 ```
 
+`if let` 문법은 `match`와 동일한 목적으로, 더욱 간결하게 쓰입니다.
+
+```rust
+struct Number {
+    odd: bool,
+    value: i32,
+}
+
+fn main() {
+    let one = Number { odd: true, value: 1 };
+    let two = Number { odd: false, value: 2 };
+    print_number(one);
+    print_number(two);
+}
+
+fn print_number(n: Number) {
+    if let Number { odd: true, value } = n {
+        println!("Odd number: {}", value);
+    } else if let Number { odd: false, value } = n {
+        println!("Even number: {}", value);
+    }
+}
+
+// this prints:
+// Odd number: 1
+// Even number: 2
+```
+
+`match`의 조건으로 `if let`을 쓸 수도 있습니다.
+
+```rust
+fn print_number(n: Number) {
+    match n {
+        Number { odd: true, value } => println!("Odd number: {}", value),
+        Number { odd: false, value } => println!("Even number: {}", value),
+    }
+}
+
+// this prints the same as before
+```
+
+두 함수는 똑같이 동작합니다. 후자가 훨씬 간결한 표현입니다. `_`을 써서 "catch-all" 패턴이 가능합니다.
+
+```rust
+fn print_number(n: Number) {
+    match n {
+        Number { value: 1, .. } => println!("One"),
+        Number { value: 2, .. } => println!("Two"),
+        Number { value, .. } => println!("{}", value),
+        // if that last arm didn't exist, we would get a compile-time error
+    }
+}
+
+fn print_number(n: Number) {
+    match n.value {
+        1 => println!("One"),
+        2 => println!("Two"),
+        _ => println!("{}", n.value),
+    }
+}
+```
+
+메소드는 아래와 같이 선언합니다.
+
+```rust
+struct Number {
+    odd: bool,
+    value: i32,
+}
+
+impl Number {
+    fn is_strictly_positive(self) -> bool {
+        self.value > 0
+    }
+}
+```
+
+객체 할당은 기본적으로 불변입니다. 객체의 내부를 변경할 수 없습니다.
+
+```rust
+fn main() {
+    let minus_two = Number {
+        odd: false,
+        value: -2,
+    };
+    println!("positive? {}", minus_two.is_strictly_positive());
+    // this prints "positive? false"
+}
+```
+
+새 객체를 같은 이름에 할당하는 것도 금지됩니다.
+
+```rust
+fn main() {
+    let n = Number {
+        odd: true,
+        value: 17,
+    };
+    n = Number {
+        odd: false,
+        value: 22,
+    }; // error: cannot assign twice to immutable variable `n`
+}
+```
+
+`mut` 키워드를 통해, 가변 객체를 만들 수 있습니다.
+
+```rust
+fn main() {
+    let mut n = Number {
+        odd: true,
+        value: 17,
+    }
+    n.value = 19; // all good
+}
+
+```
+
+`trait`을 통해 타입들이 공통적으로 갖는 동작을 추상화합니다.
+
+```rust
+trait Signed {
+    fn is_strictly_negative(self) -> bool;
+}
+```
+
+아래는 trait의 예시입니다.
+
+```rust
+impl Signed for Number {
+    fn is_strictly_negative(self) -> bool {
+        self.value < 0
+    }
+}
+
+fn main() {
+    let n = Number { odd: false, value: -44 };
+    println!("{}", n.is_strictly_negative()); // prints "true"
+}
+```
+
+원시 타입에도 적용이 가능합니다.
+
+```rust
+impl Signed for i32 {
+    fn is_strictly_negative(self) -> bool {
+        self < 0
+    }
+}
+
+fn main() {
+    let n: i32 = -44;
+    println!("{}", n.is_strictly_negative()); // prints "true"
+}
+```
+
+아래는 외부에 정의된 `Neg` trait을 통해, 연산자 오버로딩을 구현한 것입니다.
+
+```rust
+// the `Neg` trait is used to overload `-`, the
+// unary minus operator.
+impl std::ops::Neg for Number {
+    type Output = Number;
+
+    fn neg(self) -> Number {
+        Number {
+            value: -self.value,
+            odd: self.odd,
+        }
+    }
+}
+
+fn main() {
+    let n = Number { odd: true, value: 987 };
+    let m = -n; // this is only possible because we implemented `Neg`
+    println!("{}", m.value); // prints "-987"
+}
+```
+
+`impl` 블록 안에서 `Self`는 type을 의미합니다.
+
+```rust
+impl std::ops::Neg for Number {
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Self {
+            value: -self.value,
+            odd: self.odd,
+        }
+    }
+}
+```
+
+trait 중에 일부는 <i>marker</i>입니다.  
+marker란 안전하지 않은 (unsafe) 코드를 포함한 trait을 말합니다.
+안전하지 않은 코드란 메모리에 직접 접근하거나 플랫폼에 의존적인 코드를 말합니다.
+
+Some traits are markers - they don't say that a type implements some methods, they say that certain things can be done with a type.
+
+예를 들어서 `i32`는 `Copy` trait을 가집니다.
+
+```rust
+fn main() {
+    let a: i32 = 15;
+    let b = a; // `a` is copied
+    let c = a; // `a` is copied again
+}
+```
+
+아래도 가능합니다.
+
+```rust
+fn print_i32(x: i32) {
+    println!("x = {}", x);
+}
+
+fn main() {
+    let a: i32 = 15;
+    print_i32(a); // `a` is copied
+    print_i32(a); // `a` is copied again
+}
+
+```
+
+그러나 `Number` 구조체는 `Copy`를 갖지 않습니다.
+따라서 아래는 동작하지 않습니다.
+
+```rust
+fn main() {
+    let n = Number { odd: true, value: 51 };
+    let m = n; // `n` is moved into `m`
+    let o = n; // error: use of moved value: `n`
+}
+```
+
+아래 또한 동작하지 않습니다.
+
+```rust
+fn print_number(n: Number) {
+    println!("{} number {}", if n.odd { "odd" } else { "even" }, n.value);
+}
+
+fn main() {
+    let n = Number { odd: true, value: 51 };
+    print_number(n); // `n` is moved
+    print_number(n); // error: use of moved value: `n`
+}
+
+```
+
+하지만 만약 `print_number`가 불변 레퍼런스를 인자로 받는다면 동작합니다.
+
+```rust
+fn print_number(n: &Number) {
+    println!("{} number {}", if n.odd { "odd" } else { "even" }, n.value);
+}
+
+fn main() {
+    let n = Number { odd: true, value: 51 };
+    print_number(&n); // `n` is borrowed for the time of the call
+    print_number(&n); // `n` is borrowed again
+}
+```
+
+만약 인자가 가변 레퍼런스여도 동작합니다.
+
+```rust
+fn invert(n: &mut Number) {
+    n.value = -n.value;
+}
+
+fn print_number(n: &Number) {
+    println!("{} number {}", if n.odd { "odd" } else { "even" }, n.value);
+}
+
+fn main() {
+    // this time, `n` is mutable
+    let mut n = Number { odd: true, value: 51 };
+    print_number(&n);
+    invert(&mut n); // `n is borrowed mutably - everything is explicit
+    print_number(&n);
+}
+
+```
+
+Trait 메소드는 `self`를 불변 및 가변 레퍼런스로 받을 수 있습니다.
+
+```rust
+impl std::clone::Clone for Number {
+    fn clone(&self) -> Self {
+        Self { ..*self }
+    }
+}
+```
+
+When invoking trait methods, the receiver is borrowed implicitly:
+
+```rust
+fn main() {
+    let n = Number { odd: true, value: 51 };
+    let mut m = n.clone();
+    m.value += 100;
+
+    print_number(&n);
+    print_number(&m);
+}
+
+```
+
+아래의 두 줄은 서로 같습니다.
+
+```rust
+let m = n.clone();
+
+let m = std::clone::Clone::clone(&n);
+```
+
+Marker traits like `Copy` have no methods:
+
+```rust
+// note: `Copy` requires that `Clone` is implemented too
+impl std::clone::Clone for Number {
+    fn clone(&self) -> Self {
+        Self { ..*self }
+    }
+}
+
+impl std::marker::Copy for Number {}
+```
+
+`Copy`의 구현이 비워져도 `Clone`은 여전히 사용이 가능합니다.
+
+```rust
+fn main() {
+    let n = Number { odd: true, value: 51 };
+    let m = n.clone();
+    let o = n.clone();
+}
+```
+
 ### 참고문헌
 
 - Amos Wenger, <i>A half-hour to learn Rust.</i> https://fasterthanli.me/articles/a-half-hour-to-learn-rust
