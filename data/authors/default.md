@@ -1,6 +1,6 @@
 ---
 name: 김기환
-avatar: /static/images/kihwan.png
+avatar: /static/images/photo.jpg
 occupation: 연구원
 company: 티맥스소프트
 email: juljin1875@gmail.com
