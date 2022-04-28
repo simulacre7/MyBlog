@@ -2,7 +2,7 @@
 name: 김기환
 avatar: /static/images/photo.jpg
 occupation: 연구원
-company: 티맥스소프트
+company: 티맥스데이터
 email: juljin1875@gmail.com
 linkedin: https://www.linkedin.com/in/1875
 github: https://github.com/simulacre7
@@ -13,6 +13,7 @@ cv: https://simulacre7.github.io/resume
 인간과 AI 사이 상호작용을 개선하는 일을 해오고 있습니다.
 현재 티맥스에서는 블랙박스 모델의 해석을 돕는 데이터 시각화 기법을 연구 중 입니다.
 과거 UNIST에서는 "추천 엔진이 사용자의 취향을 더 잘 파악할 수 있는 인터페이스란 무엇인가?"를 주제로 연구를 수행했습니다.
+2022년 5월부터는 리디에서 프론트엔드 엔지니어로 근무할 예정입니다.
 저에 대해 더 궁금하신 분은 [이력서](https://simulacre7.github.io/resume)를 참고 부탁드립니다.
 
 웹 개발과 머신 러닝 분야에 있어서 다양한 경험을 해왔습니다.
